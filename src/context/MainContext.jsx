@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const MainContext = createContext();
 
 export const MainProvider = ({ children }) => {
@@ -43,7 +43,7 @@ export const MainProvider = ({ children }) => {
         return;
       }
 
-      const response = await axios.get(`http://localhost:5000/user/get-data/${userId}`);
+      const response = await axios.get(`${BASE_URL}/user/get-data/${userId}`);
       const currentUser = response.data.data;
       setCuser(currentUser)
       // console.log(currentUser);
@@ -84,7 +84,7 @@ export const MainProvider = ({ children }) => {
     const User = e.target.User.value;
     const Pin = +e.target.Pin.value;
 
-    axios.get(`http://localhost:5000/user/get-data`)
+    axios.get(`${BASE_URL}/user/get-data`)
       .then((success) => {
         const userData = success.data.data;
         const matchedUser = userData.find(user => {
@@ -130,7 +130,7 @@ export const MainProvider = ({ children }) => {
         throw new Error('No user logged in');
       }
 
-      const response = await axios.get(`http://localhost:5000/user/get-data/${userId.id}`);
+      const response = await axios.get(`${BASE_URL}/user/get-data/${userId.id}`);
       const currentUser = response.data.data;
       // console.log('Current User:', currentUser);
       
@@ -209,7 +209,7 @@ export const MainProvider = ({ children }) => {
 
     const User = e.target.User.value;
     const Amount = + e.target.Amount.value;
-    axios.get(`http://localhost:5000/user/get-data`)
+    axios.get(`${BASE_URL}/user/get-data`)
       .then((success) => {
         const userData = success.data.data;
         const matchedUser = userData.find(user => {
@@ -224,7 +224,7 @@ export const MainProvider = ({ children }) => {
           if (Amount > 0 && matchedUser.firstName && balance >= Amount && matchedUser.firstName !== cUser.firstName) {
 
             // Atomic transfer API call with proper data
-            axios.put(`http://localhost:5000/user/transfer/${cUser._id}/${matchedUser._id}/${Amount}`)
+            axios.put(`${BASE_URL}/user/transfer/${cUser._id}/${matchedUser._id}/${Amount}`)
 
               .then((success) => {
                 // Update UI
@@ -257,7 +257,7 @@ export const MainProvider = ({ children }) => {
     const User = e.target.User.value;
     const Amount = + e.target.Amount.value;
 
-    axios.get(`http://localhost:5000/user/get-data`)
+    axios.get(`${BASE_URL}/user/get-data`)
       .then((success) => {
         const userData = success.data.data;
         const matchedUser = userData.find(user => {
@@ -272,7 +272,7 @@ export const MainProvider = ({ children }) => {
           if (matchedUser.firstName !== cUser.firstName) {
             // Send request to Himanshu (receiver)
             // console.log(matchedUser);
-            axios.put(`http://localhost:5000/user/request-loan/${matchedUser._id}`, {
+            axios.put(`${BASE_URL}/user/request-loan/${matchedUser._id}`, {
               fromUserId:cUser._id,
               amount:Amount,
               date: date
@@ -304,7 +304,7 @@ export const MainProvider = ({ children }) => {
     const userId = JSON.parse(localStorage.getItem("userId"))?.id;
     if (!userId) return;
 
-    const res = await axios.get(`http://localhost:5000/user/get-data/${userId}`);
+    const res = await axios.get(`${BASE_URL}/user/get-data/${userId}`);
     const userData = res.data.data;
     setLoanRequests(userData.loanRequests || []);
   };
@@ -319,11 +319,11 @@ export const MainProvider = ({ children }) => {
 
   const approveLoan = async (req) => {
     try {
-      await axios.put(`http://localhost:5000/user/transfer/${cUser._id}/${req.fromUserId
+      await axios.put(`${BASE_URL}/user/transfer/${cUser._id}/${req.fromUserId
 }/${req.amount}`);
 
       // Remove the request from the DB
-      await axios.put(`http://localhost:5000/user/clear-loan-request/${cUser._id}`, {
+      await axios.put(`${BASE_URL}/user/clear-loan-request/${cUser._id}`, {
         requestId: req._id,
         fromUserId: req.fromUserId,
         amount: req.amount,
@@ -349,7 +349,7 @@ export const MainProvider = ({ children }) => {
 
 
   const denyLoan = async (req) => {
-    await axios.put(`http://localhost:5000/user/clear-loan-request/${cUser._id}`, {
+    await axios.put(`${BASE_URL}/user/clear-loan-request/${cUser._id}`, {
       requestId: req._id,
       fromUserId: req.fromUserId,
       amount: req.amount,
@@ -373,7 +373,7 @@ export const MainProvider = ({ children }) => {
     e.preventDefault();
     const User = e.target.User.value;
     const Pin = + e.target.Pin.value;
-    axios.get(`http://localhost:5000/user/get-data`)
+    axios.get(`${BASE_URL}/user/get-data`)
       .then((success) => {
         const userData = success.data.data;
         const matchedUser = userData.find(user => {
@@ -388,7 +388,7 @@ export const MainProvider = ({ children }) => {
 
           if (cUser.firstName === matchedUser.firstName && cUser.Pin === matchedUser.Pin) {
 
-            axios.delete(`http://localhost:5000/user/closeAccount/${cUser._id}`)
+            axios.delete(`${BASE_URL}/user/closeAccount/${cUser._id}`)
               .then(
                 (success) => {
                   clearInterval(timer);
