@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { MainContext } from '../context/MainContext';
 import Main from './Main';
-import Maincontext from '../../../Quizz/Frontend/src/context/Maincontext';
 const Operations = () => {
     
     return (
